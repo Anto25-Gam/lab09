@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
+import java.nio.file.Paths;
 import java.util.Random;
 
 /**
@@ -40,10 +40,18 @@ public class BadIOGUI {
      * Creates a new BadIOGUI.
      */
     public BadIOGUI() {
+        final JPanel panel = new JPanel();
+        final BoxLayout panelLayout = new BoxLayout(panel, BoxLayout.X_AXIS);
+        panel.setLayout(panelLayout);
+
         final JPanel canvas = new JPanel();
         canvas.setLayout(new BorderLayout());
         final JButton write = new JButton("Write on file");
-        canvas.add(write, BorderLayout.CENTER);
+        final JButton read = new JButton("Read on file");
+        panel.add(write);
+        panel.add(read);
+
+        canvas.add(panel, BorderLayout.CENTER);
         frame.setContentPane(canvas);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         /*
@@ -67,6 +75,19 @@ public class BadIOGUI {
                 }
             }
         });
+
+        read.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent ignored) {
+                try {
+                    for (final String line : Files.readAllLines(Paths.get(PATH))) {
+                        System.out.println(line); //NOPMD
+                    }
+                } catch (final IOException e) {
+                    e.printStackTrace(); // NOPMD
+                }
+            }
+        });
     }
 
     private void display() {
@@ -87,6 +108,7 @@ public class BadIOGUI {
          * flag makes the OS window manager take care of the default positioning
          * on screen. Results may vary, but it is generally the best choice.
          */
+        frame.pack();
         frame.setLocationByPlatform(true);
         /*
          * OK, ready to push the frame onscreen
